@@ -14,19 +14,26 @@ jobs:
       - name: PR coverage
         run: |
           cargo llvm-cov test --json --output-path pr_coverage.json
-          lines=$(jq '.data[].totals.lines.percent' pr_coverage.json)
-          functions=$(jq '.data[].totals.functions.percent' pr_coverage.json)
-          echo "pr_lines=$lines" >> $GITHUB_ENV
-          echo "pr_functions=$functions" >> $GITHUB_ENV
-          echo "PR coverage - lines: $lines, functions: $functions"
+          pr_lines=$(jq '.data[].totals.lines.percent' pr_coverage.json)
+          pr_functions=$(jq '.data[].totals.functions.percent' pr_coverage.json)
+          echo "pr_lines=$pr_lines" >> $GITHUB_ENV
+          echo "pr_functions=$pr_functions" >> $GITHUB_ENV
+          echo "PR coverage - lines: $pr_lines, functions: $pr_functions"
       - name: Checkout main
         run: git checkout origin/main
       - name: Main coverage
         run: |
           cargo llvm-cov test --json --output-path main_coverage.json
-          lines=$(jq '.data[].totals.lines.percent' main_coverage.json)
-          functions=$(jq '.data[].totals.functions.percent' main_coverage.json)
-          echo "main_lines=$lines" >> $GITHUB_ENV
-          echo "main_functions=$functions" >> $GITHUB_ENV
-          echo "Main coverage - lines: $lines, functions: $functions"
-
+          main_lines=$(jq '.data[].totals.lines.percent' main_coverage.json)
+          main_functions=$(jq '.data[].totals.functions.percent' main_coverage.json)
+          echo "main_lines=$main_lines" >> $GITHUB_ENV
+          echo "main_functions=$main_functions" >> $GITHUB_ENV
+          echo "Main coverage - lines: $main_lines, functions: $main_functions"
+      - name: Delta coverage
+        run: |
+          delta_lines=$(echo "$pr_lines - $main_lines" | bc)
+          delta_functions=$(echo "$pr_functions - $main_functions" | bc)
+          echo "delta_lines=$delta_lines" >> $GITHUB_ENV
+          echo "delta_functions=$delta_functions" >> $GITHUB_ENV
+          echo "Delta lines: $delta_lines"
+          echo "Delta functions: $delta_functions"
