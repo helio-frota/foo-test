@@ -17,9 +17,9 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+    // #[ignore]
     fn test_sub() {
-        let result = add(2, 2);
+        let result = sub(2, 2);
         assert_eq!(result, 0);
     }
 }

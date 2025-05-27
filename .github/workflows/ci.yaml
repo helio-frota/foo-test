@@ -3,6 +3,10 @@ on:
   pull_request:
     branches:
       - main
+
+permissions:
+  pull-requests: write
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -37,3 +41,14 @@ jobs:
           echo "delta_functions=$delta_functions" >> $GITHUB_ENV
           echo "Delta lines: $delta_lines"
           echo "Delta functions: $delta_functions"
+
+      - name: Coverage results
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            **Coverage results**
+            | | `Main` | This PR (`${{ github.head_ref }}`) | Delta |
+            | ----------| --------------| ----------------------------- | ------|
+            | Lines coverage     | `${{ env.main_lines }}%` | `${{ env.pr_lines }}%` | `${{ env.delta_lines }}%` |
+            | Functions coverage | `${{ env.main_functions }}%` | `${{ env.pr_functions }}%` | `${{ env.delta_functions }}%` |
+
